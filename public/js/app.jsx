@@ -1,0 +1,245 @@
+var Game = React.createClass({
+    render: function() {
+        return (
+            <div>
+                <Grid data={this.props.tableData} dataCut={this.props.tableDataCut} />
+            </div>
+        );
+    }
+});
+
+var Grid = React.createClass({
+    listMatrix: function() {
+        var matrix = [], k, i;
+        var data = this.props.data
+        for(i=0, k = -1; i < data.length; i++) {
+            if(i % 10 === 0) {
+                k++;
+                matrix[k] = [];
+            }
+            matrix[k].push(data[i]);
+        }
+        return matrix;
+    },
+    rowNodes: function() {
+        var placeHolder = [];
+        var that = this;
+        var tiles = this.listMatrix().map(function(numbers) {
+            numbers.map(function(number, index) {
+                placeHolder.push(<Tile data={number} key={number} currentNumber={that.state.currentNumber} />);
+            });
+        });
+        return placeHolder;
+    },
+    getInitialState: function() {
+        return {currentNumber: '-', currentNumberText: "_", lastCalledNumbers: [], currentCount: 0};
+    },
+    lloro: function() {
+        numToLloro(this.state.currentNumber, this.state.voiceselection);
+    },
+    updateCurrentNumberLabel: function() {
+        if(this.props.dataCut.length == 0) {
+            alert('All numbers have been called.');
+            return;
+        }
+
+        var randomIndex = Math.floor(Math.random() * this.props.dataCut.length);
+        var number = this.props.dataCut[randomIndex];
+        this.props.dataCut.splice(randomIndex, 1);
+
+        var numText = numToLloro(number, this.state.voiceselection);
+
+        if(this.state.lastCalledNumbers.indexOf(number) > -1) {
+            return;
+        }
+
+        if(this.state.lastCalledNumbers.length === 5) {
+            this.state.lastCalledNumbers.shift();
+        }
+        this.state.lastCalledNumbers.push(number);
+
+        this.setState({currentNumber: number, currentNumberText: numText, lastCalledNumbers: this.state.lastCalledNumbers, currentCount: this.state.currentCount+1});
+    },
+    displayLastNumbers: function() {
+        var node = [];
+        this.state.lastCalledNumbers.map(function(number) {
+            node.push(<NumberComponent number={number} key={number} />);
+        });
+        return node;
+    },
+
+    handleChange(event) {
+        this.setState({voiceselection: event.target.value});
+    },
+
+    render: function() {
+        return (
+
+            <section className="section">
+                <div className="columns">
+
+
+                    <div className="column is-one-third">
+                        <div className="control">
+            <span className="">
+            <a onClick={this.updateCurrentNumberLabel} className="button is-success is-large">Next!</a>
+        </span>
+
+        <span className="select is-pulled-right">
+            <select value={this.state.voiceselection} onChange={this.handleChange}>
+                <option value="UK English Female">UK English Female</option>
+                <option value="Catalan Male">Catalan Male</option>
+            </select>
+        </span>
+                        </div>
+
+                        <div className="control">
+
+          <span className="last-numbers is-pulled-right">
+            { this.displayLastNumbers() }
+          </span>
+
+
+                            <a onClick={this.lloro} className="current button is-success is-large">
+                                {this.state.currentNumber}
+                            </a>
+                        </div>
+
+                        <p>{this.state.currentNumberText}</p>
+
+                    </div>
+
+
+                    <div className="column">
+                        <div className="grid">
+                            { this.rowNodes() }
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        );
+    }
+});
+
+var Tile = React.createClass({
+    getInitialState: function() {
+        var name = (this.props.data === this.props.currentNumber) ? 'tile active' : 'tile';
+        return {className: name};
+    },
+    componentWillReceiveProps: function(nextProps) {
+        this.setState({className: 'tile active animated pulse'});
+    },
+    shouldComponentUpdate:function(nextProps, nextState) {
+        return nextProps.data === nextProps.currentNumber;
+    },
+    render: function() {
+
+        if (((this.props.data + 1) % 11)) {
+            return (
+                <div className={this.state.className}>
+                    {this.props.data}
+                </div>
+            );
+        } else {
+            return (
+                <div>
+                    <div className={this.state.className}>
+                        {this.props.data}
+                    </div>
+                </div>
+            );
+        }
+
+    }
+});
+
+var NumberComponent = React.createClass({
+    render: function() {
+        return (
+            <span className="tag is-success">{this.props.number}</span>
+        )
+    }
+});
+
+
+for (var tableData=[],i=0;i<90;++i) tableData[i]=i+1;
+var tableDataCut = tableData.slice(0);
+
+ReactDOM.render(
+    <Game tableData={tableData} tableDataCut={tableDataCut} />,
+    document.getElementById('main')
+);
+
+var numToLloro = function(num, language) {
+
+    var numText = '';
+    var options = {};
+    if (language == 'Catalan Male') {
+        if (lloro[num] != undefined) {
+            numText = lloro[num];
+            options = {pitch: 0.6, rate: 0.8};
+        } else {
+            numText = 'Elllllll ' + num;
+            options = {pitch: 0.6, rate: 0.8};
+        }
+    } else {
+        numText = 'Theeee ' + num;
+    }
+
+    responsiveVoice.speak(numText, language, options);
+
+    return numText;
+};
+
+var lloro = {
+    1: "Un que fa por",
+    2: "Un aneguet",
+    3: "Orella de gat",
+    4: "Una cadireta",
+    5: "Cincooo",
+    6: "El dia de Reis",
+    7: "Un que té set (que es foti!)",
+    8: "Un de mamellut",
+    9: "Davanter centre",
+    10: "Pelat el jove",
+    11: "La Diada",
+    12: "Els mesos",
+    13: "El de la mala sort",
+    14: "Agafa un cagarro i... esmorza!",
+    15: "La nena maca",
+    16: "L'edat del pavo",
+    17: "Que dise?",
+    18: "La majoria d'edat",
+    19: "Sant Josep",
+    20: "Pelat la nena",
+    21: "L'aneguet coix",
+    22: "Parelleta d'ànecs",
+    23: "Sant Jordi",
+    24: "Sant Joan",
+    25: "Nadal!",
+    26: "Sant Esteve",
+    27: "La verge de Montserrat",
+    28: "Els sants innocents",
+    29: "El tramvia",
+    30: "El trempat",
+    31: "L'últim dia de l'any",
+    33: "Parella de tresos (els collons dels pagesos!)",
+    44: "Quac-quac",
+    45: "Mitja part",
+    46: "Temps afegit",
+    50: "Pelat el del mig",
+    54: "Studio 54",
+    55: "Parella de músics",
+    58: "Anem a Sabadell per la C58",
+    60: "El cansat",
+    64: "Quasi jubilat",
+    65: "La jubilació",
+    66: "Parella d'embarassades",
+    67: "Em jubilaré",
+    69: "El més porc de tots",
+    70: "Pelat la tieta",
+    80: "Pelat l'àvia/la iaia",
+    82: "El naranjito",
+    90: "Pelat l'últim"
+};
