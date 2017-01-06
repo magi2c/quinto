@@ -105,7 +105,7 @@ var Grid = React.createClass({
           </a>
         </div>
 
-              <p>{this.state.currentNumberText}</p>
+              <p className="current-number-text">{this.state.currentNumberText}</p>
 
         </div>
 

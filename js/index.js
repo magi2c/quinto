@@ -137,7 +137,7 @@ var Grid = React.createClass({
                     ),
                     React.createElement(
                         'p',
-                        null,
+                        { className: 'current-number-text' },
                         this.state.currentNumberText
                     )
                 ),

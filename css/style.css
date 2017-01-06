@@ -2,6 +2,22 @@
   width:90px;
 }
 
+.button.is-large {
+    font-size: 60px;
+    height: 110px;
+    padding-left: 40px;
+    padding-right: 40px;
+}
+
+.tag.is-success {
+    background-color: #23d160;
+    color: #fff;
+    height: 50px;
+    padding-left: 20px;
+    padding-right: 20px;
+    font-size: 40px !important;
+}
+
 .grid {
   padding: 0;
   margin: 0;
@@ -69,6 +85,10 @@
   border-radius: 49px;
   margin: 0 auto;
   margin-bottom: 20px;
+}
+
+.current-number-text {
+ font-size: 6em; 
 }
 
 .current-number span {
