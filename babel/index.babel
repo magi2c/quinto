@@ -32,7 +32,7 @@ var Grid = React.createClass({
         return placeHolder;
     },
     getInitialState: function() {
-        return {currentNumber: '-', currentNumberText: "_", lastCalledNumbers: [], currentCount: 0};
+        return {currentNumber: '---', currentNumberText: "_", lastCalledNumbers: [], currentCount: 0};
     },
   lloro: function() {
       numToLloro(this.state.currentNumber, this.state.voiceselection);
@@ -82,7 +82,7 @@ var Grid = React.createClass({
             <div className="column is-one-third">
             <div className="control">
             <span className="">
-            <a onClick={this.updateCurrentNumberLabel} className="button is-success is-large">Next!</a>
+            <a onClick={this.updateCurrentNumberLabel} className="tag is-success is-success is-large">Next!</a>
         </span>
 
         <span className="select is-pulled-right">
